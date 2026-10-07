@@ -278,11 +278,10 @@ btnConnect.addEventListener('click', function () {
             ]
         );
     } else {
-        if (v2rayWizardCompleted) {
-            openV2RayApp();
-        } else {
-            startConnectWizard();
-        }
+        // Always start the connection wizard from step 1.
+        // The completion flag is kept only for state/history and must not
+        // make the UI skip the installation/check steps on the next visit.
+        startConnectWizard();
     }
 });
 

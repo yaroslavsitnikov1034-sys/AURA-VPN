@@ -1641,6 +1641,77 @@ body {
     background: linear-gradient(135deg, var(--success), var(--success-dark));
 }
 
+
+/* Mobile layout hardening */
+html, body {
+    width: 100%;
+    min-width: 0;
+}
+
+@media (max-width: 600px) {
+    body {
+        padding-bottom: calc(var(--nav-height) + env(safe-area-inset-bottom) + 16px);
+    }
+
+    .header {
+        padding: 14px 16px 10px;
+    }
+
+    .header__logo {
+        min-width: 0;
+    }
+
+    .logo-subtitle {
+        max-width: 210px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .status-bar,
+    .main {
+        width: 100%;
+        max-width: none;
+    }
+
+    .status-bar {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+
+    .main {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+
+    .hero {
+        padding-top: 12px;
+    }
+
+    .hero-title {
+        font-size: clamp(25px, 8vw, 32px);
+    }
+
+    .connect-dial {
+        margin-left: auto;
+        margin-right: auto;
+        width: min(240px, 72vw);
+        height: min(240px, 72vw);
+    }
+
+    .connect-dial__btn {
+        width: min(180px, 54vw);
+        height: min(180px, 54vw);
+    }
+
+    .modal {
+        width: calc(100vw - 24px);
+        max-width: 440px;
+        max-height: calc(100dvh - 24px);
+        overflow-y: auto;
+    }
+}
+
 /* Responsive */
 @media (min-width: 420px) {
     .hero-title { font-size: 32px; }
