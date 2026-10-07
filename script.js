@@ -381,7 +381,7 @@ function startConnectWizard() {
             '<p class="wizard-step__sub">Устройство: ' + deviceText + '</p>' +
         '</div>',
         [
-            { label: 'Далее', style: 'primary', callback: function () { showV2RayInstallStep(device); } }
+            { label: 'Далее', style: 'primary', callback: function () { showV2RayInstallStep(device); return true; } }
         ]
     );
 }
@@ -405,7 +405,7 @@ function showV2RayInstallStep(device) {
         body += '<p class="wizard-step__sub">На ПК этот сайт остаётся доступен в браузере. Для подключения скопируйте конфигурацию и импортируйте её в совместимый клиент.</p>';
     }
 
-    actions.push({ label: 'Далее', style: 'primary', callback: function () { showV2RayConfigStep(); } });
+    actions.push({ label: 'Далее', style: 'primary', callback: function () { showV2RayConfigStep(); return true; } });
     showModal('Установка клиента', body, actions);
 }
 
