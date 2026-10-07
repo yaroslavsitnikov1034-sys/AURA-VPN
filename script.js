@@ -3,7 +3,7 @@
 const SUPPORT_URL = 'https://t.me/AURA_supp0rt';
 const APP_LINKS = {
   android: 'https://play.google.com/store/apps/details?id=com.v2raytun.android',
-  ios: 'https://apps.apple.com/ru/search?term=v2raytun'
+  ios: 'https://apps.apple.com/ru/app/v2ray-vpn-%D0%B2%D0%BF%D0%BD-v2raytun/id6798667599'
 };
 const DEMO_VLESS = 'vless://demo@example.com:443?encryption=none&security=tls&type=ws&host=example.com&path=%2Fvpn#AURA-Demo';
 const TARIFFS = {
@@ -29,6 +29,17 @@ function saveState(){ try{ localStorage.setItem('aura_clean_state', JSON.stringi
 function escapeHtml(value){ return String(value).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c])); }
 function openExternal(url){ const a=document.createElement('a'); a.href=url; a.target='_blank'; a.rel='noopener noreferrer'; document.body.appendChild(a); a.click(); a.remove(); }
 function detectDevice(){ const ua=navigator.userAgent||''; if(/android/i.test(ua)) return 'android'; if(/iphone|ipad|ipod/i.test(ua)) return 'ios'; return 'desktop'; }
+function openStore(device){
+  const url=APP_LINKS[device];
+  if(!url) return;
+  window.location.assign(url);
+}
+function applyMobileLayout(){
+  const device=detectDevice();
+  document.documentElement.classList.toggle('is-mobile-device',device!=='desktop');
+}
+applyMobileLayout();
+window.addEventListener('resize',applyMobileLayout);
 function showToast(message){ const el=$('#toast'); el.textContent=message; el.classList.add('is-visible'); clearTimeout(showToast.t); showToast.t=setTimeout(()=>el.classList.remove('is-visible'),2400); }
 function showModal({step='',title,body,actions=[]}){
   $('#modalStep').textContent=step;
@@ -99,6 +110,11 @@ function showConnectionInfo(){
 }
 
 function handleConnect(){
+  const device=detectDevice();
+  if(device==='android' || device==='ios'){
+    openStore(device);
+    return;
+  }
   if(state.connected){state.connected=false;stopConnectTimer();updateHome();showToast('Соединение отключено');return;}
   startWizard();
 }
