@@ -1686,3 +1686,189 @@ body::after {
         opacity: 0.82;
     }
 }
+
+/* Desktop layout: keep the same style, but use a calmer scale on wide screens. */
+@media (min-width: 900px) {
+    :root {
+        --nav-height: 60px;
+    }
+
+    .header {
+        max-width: 760px;
+        margin: 0 auto;
+        padding: 16px 24px 10px;
+    }
+
+    .header__logo {
+        gap: 8px;
+    }
+
+    .logo-flame {
+        width: 30px;
+        height: 30px;
+    }
+
+    .logo-icon {
+        width: 28px;
+        height: 28px;
+    }
+
+    .logo-title {
+        font-size: 17px;
+    }
+
+    .logo-subtitle {
+        font-size: 10px;
+    }
+
+    .header__settings {
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
+    }
+
+    .header__settings svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .status-bar {
+        max-width: 720px;
+        margin-bottom: 4px;
+        padding: 0 24px;
+        gap: 7px;
+    }
+
+    .status-bar__dot {
+        width: 7px;
+        height: 7px;
+    }
+
+    .status-bar__text {
+        font-size: 12px;
+    }
+
+    .main {
+        max-width: 720px;
+        padding: 0 24px 18px;
+    }
+
+    .hero {
+        padding: 8px 0 18px;
+    }
+
+    .hero-title {
+        font-size: 26px;
+        margin-bottom: 6px;
+    }
+
+    .hero-text {
+        font-size: 13px;
+        margin-bottom: 14px;
+    }
+
+    .connect-dial {
+        width: 200px;
+        height: 200px;
+        margin-top: 12px;
+    }
+
+    .connect-dial__ring--outer,
+    .connect-dial__progress-ring {
+        width: 200px;
+        height: 200px;
+    }
+
+    .connect-dial__ring--inner {
+        width: 174px;
+        height: 174px;
+    }
+
+    .connect-dial__btn {
+        width: 150px;
+        height: 150px;
+    }
+
+    .connect-dial__icon {
+        width: 32px;
+        height: 32px;
+    }
+
+    .connect-dial__label {
+        font-size: 14px;
+    }
+
+    .connect-dial__timer {
+        font-size: 21px;
+    }
+
+    .connect-dial__status-text {
+        font-size: 12px;
+    }
+
+    .connection-info {
+        max-width: 520px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .features {
+        max-width: 640px;
+        margin-left: auto;
+        margin-right: auto;
+        gap: 10px;
+    }
+
+    .feature {
+        padding: 12px 14px;
+        gap: 10px;
+    }
+
+    .feature__icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 10px;
+    }
+
+    .feature__icon svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .feature__title {
+        font-size: 13px;
+    }
+
+    .feature__text {
+        font-size: 11px;
+    }
+
+    .bottom-nav {
+        max-width: 720px;
+        height: var(--nav-height);
+        border-radius: 18px 18px 0 0;
+    }
+
+    .nav-item {
+        font-size: 9px;
+        gap: 3px;
+    }
+
+    .nav-item svg {
+        width: 19px;
+        height: 19px;
+    }
+
+    .modal-overlay {
+        align-items: center;
+    }
+
+    .modal {
+        max-width: 520px;
+        max-height: 78vh;
+    }
+
+    .toast {
+        bottom: calc(var(--nav-height) + 16px);
+    }
+}
