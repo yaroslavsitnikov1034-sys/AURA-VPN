@@ -166,8 +166,42 @@ function renderSubscription(){
 function renderProfile(){ updateHome(); }
 
 function runSpeedTest(){
-  clearTimeout(speedTimer); $('#speedBtn').disabled=true; $('#speedBtn').textContent='Тестируем…'; $('#speedNumber').textContent='0'; $('#speedBar').style.width='0%';
-  let n=0; const target=72; const step=()=>{n+=3;if(n>=target){n=target;$('#speedNumber').textContent=n;$('#speedBar').style.width='86%';$('#speedPing').textContent='38 мс';$('#speedJitter').textContent='5 мс';$('#speedBtn').textContent='Повторить тест';$('#speedBtn').disabled=false;return}$('#speedNumber').textContent=n;$('#speedBar').style.width=Math.round(n/target*78)+'%';speedTimer=setTimeout(step,45)}; step();
+  clearTimeout(speedTimer);
+  const card=$('#speedCard');
+  const btn=$('#speedBtn');
+  const stateText=$('#speedState');
+  const hint=$('#speedHint');
+  card.classList.add('is-testing');
+  btn.disabled=true;
+  btn.textContent='Измеряем…';
+  stateText.textContent='Измеряем скорость';
+  hint.textContent='Пожалуйста, подождите несколько секунд';
+  $('#speedNumber').textContent='0';
+  $('#speedBar').style.width='0%';
+  $('#speedPing').textContent='—';
+  $('#speedJitter').textContent='—';
+  let n=0;
+  const target=72;
+  const step=()=>{
+    n+=3;
+    if(n>=target){
+      n=target;
+      card.classList.remove('is-testing');
+      $('#speedNumber').textContent=n;
+      $('#speedBar').style.width='86%';
+      $('#speedPing').textContent='38 мс';
+      $('#speedJitter').textContent='5 мс';
+      stateText.textContent='Тест завершён';
+      hint.textContent='Результат готов';
+      btn.textContent='Повторить тест';
+      btn.disabled=false;
+      return;
+    }
+    $('#speedNumber').textContent=n;
+    $('#speedBar').style.width=Math.round(n/target*78)+'%';
+    speedTimer=setTimeout(step,45);
+  };
+  step();
 }
 
 $('#connectBtn').addEventListener('click',handleConnect);
