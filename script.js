@@ -171,30 +171,23 @@ function runSpeedTest(){
   const btn=$('#speedBtn');
   const stateText=$('#speedState');
   const hint=$('#speedHint');
-  card.classList.add('is-testing');
-  btn.disabled=true;
-  btn.textContent='Измеряем…';
-  stateText.textContent='Измеряем скорость';
-  hint.textContent='Пожалуйста, подождите несколько секунд';
-  $('#speedNumber').textContent='0';
-  $('#speedBar').style.width='0%';
-  $('#speedPing').textContent='—';
-  $('#speedJitter').textContent='—';
-  let n=0;
-  const target=72;
+  if(card) card.classList.add('is-testing');
+  if(btn){btn.disabled=true;btn.textContent='Измеряем…';}
+  if(stateText) stateText.textContent='Измеряем скорость';
+  if(hint) hint.textContent='Проверяем канал и задержку';
+  $('#speedNumber').textContent='0'; $('#speedBar').style.width='0%';
+  $('#speedPing').textContent='—'; $('#speedJitter').textContent='—';
+  let n=0; const target=72;
   const step=()=>{
     n+=3;
     if(n>=target){
       n=target;
-      card.classList.remove('is-testing');
-      $('#speedNumber').textContent=n;
-      $('#speedBar').style.width='86%';
-      $('#speedPing').textContent='38 мс';
-      $('#speedJitter').textContent='5 мс';
-      stateText.textContent='Тест завершён';
-      hint.textContent='Результат готов';
-      btn.textContent='Повторить тест';
-      btn.disabled=false;
+      if(card) card.classList.remove('is-testing');
+      $('#speedNumber').textContent=n; $('#speedBar').style.width='86%';
+      $('#speedPing').textContent='38 мс'; $('#speedJitter').textContent='5 мс';
+      if(stateText) stateText.textContent='Тест завершён';
+      if(hint) hint.textContent='Результат готов';
+      if(btn){btn.textContent='Повторить тест';btn.disabled=false;}
       return;
     }
     $('#speedNumber').textContent=n;

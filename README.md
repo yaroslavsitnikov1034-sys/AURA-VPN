@@ -15,5 +15,3 @@
 
 
 На Android/iPhone кнопка «Подключить» сразу открывает страницу v2RayTun в магазине приложений. На ПК остаётся пошаговый мастер из 3 шагов.
-
-Design update: minimalist blue-violet neon theme, frameless neon flame logo, and redesigned idle/running/finished speed-test states.
