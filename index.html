@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#0a0a0f">
+    <title>AURA VPN</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+  <meta property="og:image" content="https://bolt.new/static/og_default.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://bolt.new/static/og_default.png">
+</head>
+<body>
+    <div class="bg-glow bg-glow--top"></div>
+    <div class="bg-glow bg-glow--bottom"></div>
+
+    <!-- Top Header -->
+    <header class="header">
+        <div class="header__inner">
+            <div class="header__logo">
+                <div class="logo-flame">
+                    <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="url(#flameGrad)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <defs>
+                            <linearGradient id="flameGrad" x1="0%" y1="100%" x2="0%" y2="0%">
+                                <stop offset="0%" stop-color="#6c5ce7"/>
+                                <stop offset="40%" stop-color="#4a6cf7"/>
+                                <stop offset="100%" stop-color="#00d4ff"/>
+                            </linearGradient>
+                        </defs>
+                        <path d="M8.5 14.5A2.5 2.5 0 0011 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 11-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 002.5 2.5z"/>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="logo-title">AURA <span class="logo-accent">VPN</span></h1>
+                    <p class="logo-subtitle">Безопасный интернет без границ</p>
+                </div>
+            </div>
+            <button class="header__settings" id="btnSettings" aria-label="Настройки">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 11-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 110-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 114 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 110 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+            </button>
+        </div>
+    </header>
+
+    <!-- Status Banner -->
+    <div class="status-bar" id="statusBar">
+        <div class="status-bar__dot"></div>
+        <span class="status-bar__text" id="statusText">Не подключено</span>
+    </div>
+
+    <!-- Pages Container -->
+    <main class="main" id="mainContainer">
+
+        <!-- PAGE: HOME -->
+        <section class="page page--active" id="page-home">
+            <div class="hero">
+                <h2 class="hero-title">Защити своё<br>подключение</h2>
+                <p class="hero-text">Скорость, приватность и свобода в один клик</p>
+
+                <div class="connect-dial" id="connectDial">
+                    <div class="connect-dial__ring connect-dial__ring--outer"></div>
+                    <div class="connect-dial__ring connect-dial__ring--inner"></div>
+                    <div class="connect-dial__progress-ring">
+                        <svg viewBox="0 0 240 240">
+                            <circle class="progress-bg" cx="120" cy="120" r="110"/>
+                            <circle class="progress-fg" cx="120" cy="120" r="110" id="progressCircle"/>
+                        </svg>
+                    </div>
+                    <button class="connect-dial__btn" id="btnConnect" aria-label="Подключить VPN">
+                        <div class="connect-dial__btn-inner">
+                            <svg class="connect-dial__icon connect-dial__icon--power" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M18.36 6.64a9 9 0 11-12.73 0"/><line x1="12" y1="2" x2="12" y2="12"/>
+                            </svg>
+                            <svg class="connect-dial__icon connect-dial__icon--shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/>
+                            </svg>
+                            <svg class="connect-dial__icon connect-dial__icon--spinner" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 12a9 9 0 11-6.219-8.56"/>
+                            </svg>
+                            <span class="connect-dial__label" id="btnConnectLabel">Подключить</span>
+                            <span class="connect-dial__timer" id="connectTimer">00:00:00</span>
+                            <span class="connect-dial__status-text" id="dialStatusText">Подключено</span>
+                        </div>
+                    </button>
+                </div>
+            </div>
+
+            <div class="connection-info" id="connectionInfo">
+                <div class="connection-info__row">
+                    <span class="connection-info__label">IP-адрес</span>
+                    <span class="connection-info__value" id="ipValue">—</span>
+                </div>
+                <div class="connection-info__row">
+                    <span class="connection-info__label">Сервер</span>
+                    <span class="connection-info__value" id="serverValue">—</span>
+                </div>
+                <div class="connection-info__row">
+                    <span class="connection-info__label">Пинг</span>
+                    <span class="connection-info__value" id="pingValue">—</span>
+                </div>
+            </div>
+
+            <div class="features">
+                <div class="feature">
+                    <div class="feature__icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                    </div>
+                    <div>
+                        <h3 class="feature__title">Высокая скорость</h3>
+                        <p class="feature__text">До 10 Гбит/с</p>
+                    </div>
+                </div>
+                <div class="feature">
+                    <div class="feature__icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+                    </div>
+                    <div>
+                        <h3 class="feature__title">Шифрование</h3>
+                        <p class="feature__text">AES-256</p>
+                    </div>
+                </div>
+                <div class="feature">
+                    <div class="feature__icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+                    </div>
+                    <div>
+                        <h3 class="feature__title">50+ стран</h3>
+                        <p class="feature__text">По всему миру</p>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn-secondary" id="btnGoTariffs">
+                <span>Выбрать тариф</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </button>
+        </section>
+
+        <!-- PAGE: SPEED TEST -->
+        <section class="page" id="page-speed">
+            <h2 class="section-title">Тест скорости</h2>
+
+            <div class="speed-widget" id="speedWidget">
+                <div class="speed-gauge" id="speedGauge">
+                    <svg class="speed-gauge__svg" viewBox="0 0 200 120">
+                        <path class="speed-gauge__track" d="M 20 110 A 80 80 0 0 1 180 110" fill="none" stroke="rgba(108,92,231,0.12)" stroke-width="8" stroke-linecap="round"/>
+                        <path class="speed-gauge__fill" id="speedGaugeFill" d="M 20 110 A 80 80 0 0 1 180 110" fill="none" stroke="url(#speedGrad)" stroke-width="8" stroke-linecap="round" stroke-dasharray="251.3" stroke-dashoffset="251.3"/>
+                        <defs>
+                            <linearGradient id="speedGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" stop-color="#6c5ce7"/>
+                                <stop offset="50%" stop-color="#4a6cf7"/>
+                                <stop offset="100%" stop-color="#00d4ff"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                    <div class="speed-gauge__center">
+                        <span class="speed-gauge__value" id="speedValue">0.0</span>
+                        <span class="speed-gauge__unit">Мбит/с</span>
+                    </div>
+                </div>
+
+                <button class="speed-start-btn" id="btnSpeedTest">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                    <span id="speedBtnLabel">Начать тест</span>
+                </button>
+
+                <div class="speed-results" id="speedResults" style="display:none;">
+                    <div class="speed-result">
+                        <div class="speed-result__icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/><polyline points="12 6 12 12 16 14"/></svg>
+                        </div>
+                        <span class="speed-result__label">Пинг</span>
+                        <span class="speed-result__value" id="resultPing">—</span>
+                    </div>
+                    <div class="speed-result">
+                        <div class="speed-result__icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+                        </div>
+                        <span class="speed-result__label">Джиттер</span>
+                        <span class="speed-result__value" id="resultJitter">—</span>
+                    </div>
+                    <div class="speed-result">
+                        <div class="speed-result__icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+                        </div>
+                        <span class="speed-result__label">Загрузка</span>
+                        <span class="speed-result__value" id="resultDownload">—</span>
+                    </div>
+                    <div class="speed-result">
+                        <div class="speed-result__icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+                        </div>
+                        <span class="speed-result__label">Отдача</span>
+                        <span class="speed-result__value" id="resultUpload">—</span>
+                    </div>
+                </div>
+
+                <div class="speed-status" id="speedStatus" style="display:none;">
+                    <div class="speed-status__spinner"></div>
+                    <span id="speedStatusText">Измеряем пинг...</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- PAGE: TARIFFS -->
+        <section class="page" id="page-tariffs">
+            <h2 class="section-title">Выберите тариф</h2>
+            <div class="tariffs-grid">
+                <div class="card" data-tariff="tariff_1_month">
+                    <div class="card__header">
+                        <span class="card__period">1 месяц</span>
+                    </div>
+                    <div class="card__price">
+                        <span class="card__amount">150</span>
+                        <span class="card__currency">₽</span>
+                    </div>
+                    <ul class="card__features">
+                        <li>Все серверы</li>
+                        <li>Без лимита трафика</li>
+                        <li>Поддержка 24/7</li>
+                    </ul>
+                    <button class="btn-buy" data-tariff="tariff_1_month">Купить</button>
+                </div>
+
+                <div class="card card--popular" data-tariff="tariff_3_months">
+                    <div class="card__badge">Популярный</div>
+                    <div class="card__header">
+                        <span class="card__period">3 месяца</span>
+                    </div>
+                    <div class="card__price">
+                        <span class="card__amount">400</span>
+                        <span class="card__currency">₽</span>
+                    </div>
+                    <div class="card__savings">Экономия 11%</div>
+                    <ul class="card__features">
+                        <li>Все серверы</li>
+                        <li>Без лимита трафика</li>
+                        <li>Поддержка 24/7</li>
+                    </ul>
+                    <button class="btn-buy" data-tariff="tariff_3_months">Купить</button>
+                </div>
+
+                <div class="card card--year" data-tariff="tariff_1_year">
+                    <div class="card__header">
+                        <span class="card__period">1 год</span>
+                    </div>
+                    <div class="card__price">
+                        <span class="card__amount">1500</span>
+                        <span class="card__currency">₽</span>
+                    </div>
+                    <div class="card__savings">Экономия 17%</div>
+                    <ul class="card__features">
+                        <li>Все серверы</li>
+                        <li>Без лимита трафика</li>
+                        <li>Приоритетная поддержка</li>
+                        <li>2 устройства в подарок</li>
+                    </ul>
+                    <button class="btn-buy" data-tariff="tariff_1_year">Купить</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- PAGE: SUBSCRIPTIONS -->
+        <section class="page" id="page-subs">
+            <h2 class="section-title">Моя подписка</h2>
+
+            <div class="sub-status" id="subStatus">
+                <div class="sub-status__icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                </div>
+                <div class="sub-status__info">
+                    <h3 class="sub-status__title" id="subPlanTitle">Нет активной подписки</h3>
+                    <p class="sub-status__text" id="subPlanText">Выберите тариф, чтобы начать пользоваться VPN</p>
+                </div>
+            </div>
+
+            <div class="sub-card" id="subActiveCard" style="display:none;">
+                <div class="sub-card__header">
+                    <span class="sub-card__plan" id="subActivePlan">—</span>
+                    <span class="sub-card__badge sub-card__badge--active">Активна</span>
+                </div>
+                <div class="sub-card__dates">
+                    <div class="sub-card__date">
+                        <span class="sub-card__date-label">Активна с</span>
+                        <span class="sub-card__date-value" id="subDateStart">—</span>
+                    </div>
+                    <div class="sub-card__date">
+                        <span class="sub-card__date-label">Действует до</span>
+                        <span class="sub-card__date-value" id="subDateEnd">—</span>
+                    </div>
+                </div>
+                <div class="sub-card__progress">
+                    <div class="sub-card__progress-bar">
+                        <div class="sub-card__progress-fill" id="subProgressBar" style="width:0%"></div>
+                    </div>
+                    <span class="sub-card__progress-text" id="subProgressText">0 дней осталось</span>
+                </div>
+                <button class="btn-outline" id="btnCancelSub">Отменить подписку</button>
+            </div>
+
+            <div class="sub-history" id="subHistory" style="display:none;">
+                <h3 class="sub-history__title">История покупок</h3>
+                <div class="sub-history__list" id="subHistoryList"></div>
+            </div>
+
+            <div class="sub-empty" id="subEmpty">
+                <div class="sub-empty__icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/><path d="M12 8v4l3 3"/></svg>
+                </div>
+                <p class="sub-empty__text">У вас пока нет подписки</p>
+                <button class="btn-buy" id="btnSubGoTariffs">Выбрать тариф</button>
+            </div>
+        </section>
+
+        <!-- PAGE: PROFILE -->
+        <section class="page" id="page-profile">
+            <h2 class="section-title">Профиль</h2>
+
+            <div class="profile-card">
+                <div class="profile-card__avatar" id="profileAvatar">A</div>
+                <div class="profile-card__info">
+                    <h3 class="profile-card__name" id="profileName">Пользователь</h3>
+                    <p class="profile-card__id" id="profileId">ID: —</p>
+                </div>
+            </div>
+
+            <div class="profile-menu">
+                <button class="profile-item" id="btnProfileSpeed">
+                    <div class="profile-item__icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                    </div>
+                    <span class="profile-item__label">Тест скорости</span>
+                    <svg class="profile-item__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                </button>
+                <button class="profile-item" id="btnProfileSub">
+                    <div class="profile-item__icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+                    </div>
+                    <span class="profile-item__label">Моя подписка</span>
+                    <svg class="profile-item__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                </button>
+                <button class="profile-item" id="btnProfileTariffs">
+                    <div class="profile-item__icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+                    </div>
+                    <span class="profile-item__label">Тарифы</span>
+                    <svg class="profile-item__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                </button>
+                <button class="profile-item" id="btnProfileSupport">
+                    <div class="profile-item__icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
+                    </div>
+                    <span class="profile-item__label">Поддержка</span>
+                    <svg class="profile-item__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                </button>
+                <button class="profile-item" id="btnProfileAbout">
+                    <div class="profile-item__icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                    </div>
+                    <span class="profile-item__label">О приложении</span>
+                    <svg class="profile-item__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                </button>
+            </div>
+
+            <div class="profile-stats">
+                <div class="profile-stat">
+                    <span class="profile-stat__value" id="statTraffic">0 ГБ</span>
+                    <span class="profile-stat__label">Трафик</span>
+                </div>
+                <div class="profile-stat">
+                    <span class="profile-stat__value" id="statDevices">0</span>
+                    <span class="profile-stat__label">Устройства</span>
+                </div>
+                <div class="profile-stat">
+                    <span class="profile-stat__value" id="statDays">0</span>
+                    <span class="profile-stat__label">Дней с нами</span>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <button class="nav-item nav-item--active" data-page="home">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            <span>Главная</span>
+        </button>
+        <button class="nav-item" data-page="speed">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+            <span>Скорость</span>
+        </button>
+        <button class="nav-item" data-page="tariffs">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+            <span>Тарифы</span>
+        </button>
+        <button class="nav-item" data-page="subs">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/><polyline points="12 6 12 12 16 14"/></svg>
+            <span>Подписки</span>
+        </button>
+        <button class="nav-item" data-page="profile">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <span>Профиль</span>
+        </button>
+    </nav>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal" id="modal">
+            <div class="modal__header">
+                <h3 class="modal__title" id="modalTitle">Подтверждение</h3>
+                <button class="modal__close" id="modalClose" aria-label="Закрыть">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+            <div class="modal__body" id="modalBody"></div>
+            <div class="modal__actions" id="modalActions"></div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <script src="script.js"></script>
+</body><!-- ИНТЕРАКТИВНОЕ ОКНО ОНБОРДИНГА V2RAY (ДОБАВЛЕНО) -->
+<div id="v2rayModal" class="modal-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; bg: rgba(10,10,15,0.95); background: rgba(10, 10, 15, 0.96); z-index: 9999; align-items: center; justify-content: center; font-family: 'Inter', sans-serif; color: #fff;">
+    <div class="modal-content" style="background: #141421; padding: 24px; border-radius: 20px; width: 90%; max-width: 380px; border: 1px solid #2a2a40; box-shadow: 0 20px 40px rgba(0,0,0,0.5); text-align: center; box-sizing: border-box;">
+        
+        <!-- Шаг 1: Вопрос про наличие программы -->
+        <div id="modalStep1">
+            <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 12px; background: linear-gradient(90deg, #00d4ff, #6c5ce7); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Подключение VPN</h3>
+            <p style="font-size: 14px; color: #b5b5c3; line-height: 1.5; margin-bottom: 24px;">Наш сервис работает через надежный протокол V2Ray. У вас уже установлено приложение-клиент (v2rayNG / V2RayTun)?</p>
+            <button id="btnHasApp" style="width: 100%; padding: 14px; background: #6c5ce7; border: none; border-radius: 12px; color: #fff; font-weight: 600; margin-bottom: 12px; cursor: pointer; font-size: 15px;">Да, приложение есть</button>
+            <button id="btnNoApp" style="width: 100%; padding: 14px; background: transparent; border: 1px solid #3f3f5f; border-radius: 12px; color: #b5b5c3; font-weight: 600; cursor: pointer; font-size: 15px;">Нет, нужно скачать</button>
+        </div>
+
+        <!-- Шаг 2: Ссылки на скачивание -->
+        <div id="modalStep2" style="display: none;">
+            <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 12px; color: #fff;">Шаг 1: Скачайте клиент</h3>
+            <p style="font-size: 14px; color: #b5b5c3; line-height: 1.5; margin-bottom: 20px;">Выберите вашу операционную систему для быстрой установки официального приложения:</p>
+            <a href="https://google.com" target="_blank" class="download-link" style="display: block; padding: 14px; background: #222235; border: 1px solid #3f3f5f; border-radius: 12px; color: #fff; text-decoration: none; font-weight: 600; margin-bottom: 12px; font-size: 15px;">🤖 Скачать для Android</a>
+            <a href="https://apple.com" target="_blank" class="download-link" style="display: block; padding: 14px; background: #222235; border: 1px solid #3f3f5f; border-radius: 12px; color: #fff; text-decoration: none; font-weight: 600; margin-bottom: 20px; font-size: 15px;">🍏 Скачать для iOS</a>
+            <button id="btnGoToKey" style="width: 100%; padding: 12px; background: transparent; border: none; color: #00d4ff; font-weight: 600; cursor: pointer; font-size: 14px;">Я скачал, получить ключ ➔</button>
+        </div>
+
+        <!-- Шаг 3: Копирование и запуск ключа -->
+        <div id="modalStep3" style="display: none;">
+            <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 12px; color: #00d4ff;">Шаг 2: Активация</h3>
+            <p style="font-size: 14px; color: #b5b5c3; line-height: 1.5; margin-bottom: 16px;">Скопируйте ваш персональный ключ доступа и импортируйте его в приложение.</p>
+            
+            <div style="background: #0a0a0f; padding: 12px; border-radius: 10px; border: 1px solid #2a2a40; font-family: monospace; font-size: 11px; color: #85859d; word-break: break-all; margin-bottom: 16px; text-align: left; max-height: 60px; overflow-y: auto;" id="keyPlaceholder">
+                vless://aura-premium-vpn-test-access-key-bolt-new-protocol-xtls-reality@127.0.0.1:443?security=reality#AURA_VPN_TEST
+            </div>
+
+            <button id="btnCopyKey" style="width: 100%; padding: 14px; background: #00d4ff; border: none; border-radius: 12px; color: #0a0a0f; font-weight: 700; margin-bottom: 12px; cursor: pointer; font-size: 15px;">📋 Скопировать ключ</button>
+            <p style="font-size: 12px; color: #65657d; margin-bottom: 16px;">После копирования откройте приложение и нажмите кнопку "+" вверху.</p>
+            <button id="btnCloseModal" style="width: 100%; padding: 10px; background: transparent; border: none; color: #ef4444; font-weight: 500; cursor: pointer; font-size: 14px;">Закрыть окно</button>
+        </div>
+
+    </div>
+</div>
+
+</html>
