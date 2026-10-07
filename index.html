@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#090a11">
+  <meta name="description" content="AURA VPN — быстрый и приватный интернет.">
+  <title>AURA VPN</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="ambient ambient--1"></div>
+  <div class="ambient ambient--2"></div>
+
+  <header class="topbar">
+    <div class="topbar__inner">
+      <button class="brand" data-action="home" aria-label="AURA VPN">
+        <span class="brand__mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M8.7 14.6A2.6 2.6 0 0 0 11.3 12c0-1.4-.4-2.1-1.1-3-1.1-2-.2-4 1.9-6.1.6 2.6 2.1 4.8 4.1 6.4 2 1.5 3 3.4 3 5.5A7.2 7.2 0 1 1 5 14.1c.9.5 1.4.5 1.9.5 1 0 1.6-.6 1.8 0Z"/></svg>
+        </span>
+        <span>
+          <strong>AURA <em>VPN</em></strong>
+          <small>Безопасный интернет без границ</small>
+        </span>
+      </button>
+
+      <button class="icon-button" id="settingsBtn" aria-label="Настройки">
+        <svg viewBox="0 0 24 24"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-1.8 1.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6V21h-2.5v-1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1-1.8-1.8.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.6-1H5v-2.5h1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1L9 6.7l.1.1a1.7 1.7 0 0 0 1.9.3 1.7 1.7 0 0 0 1-1.6V4h2.5v1a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1 1.8 1.8-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h1v2.5h-1a1.7 1.7 0 0 0-1.6 1Z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <div class="status" id="statusBar"><span class="status__dot"></span><span id="statusText">Не подключено</span></div>
+
+  <main class="app-shell">
+    <section class="page page--active" id="page-home">
+      <div class="hero">
+        <p class="eyebrow">AURA NETWORK</p>
+        <h1>Защити своё<br><span>подключение</span></h1>
+        <p class="hero__text">Скорость, приватность и свобода — в один клик.</p>
+      </div>
+
+      <div class="connect-wrap">
+        <div class="connect-glow"></div>
+        <div class="connect-ring connect-ring--outer"></div>
+        <div class="connect-ring connect-ring--inner"></div>
+        <svg class="progress" viewBox="0 0 240 240" aria-hidden="true">
+          <circle class="progress__track" cx="120" cy="120" r="109"></circle>
+          <circle class="progress__value" id="progressValue" cx="120" cy="120" r="109"></circle>
+        </svg>
+        <button class="connect-button" id="connectBtn">
+          <span class="connect-button__icon" id="connectIcon">
+            <svg viewBox="0 0 24 24"><path d="M18.4 6.6a9 9 0 1 1-12.8 0"/><path d="M12 2v10"/></svg>
+          </span>
+          <span class="connect-button__label" id="connectLabel">Подключить</span>
+          <span class="connect-button__timer" id="connectTimer">00:00:00</span>
+        </button>
+      </div>
+
+      <div class="connection-card" id="connectionCard">
+        <div><span>IP-адрес</span><strong id="ipValue">—</strong></div>
+        <div><span>Сервер</span><strong id="serverValue">—</strong></div>
+        <div><span>Пинг</span><strong id="pingValue">—</strong></div>
+      </div>
+
+      <div class="features">
+        <article class="feature-card"><span class="feature-card__icon">⚡</span><div><b>Высокая скорость</b><small>До 10 Гбит/с</small></div></article>
+        <article class="feature-card"><span class="feature-card__icon">◈</span><div><b>Шифрование</b><small>Защищённое соединение</small></div></article>
+        <article class="feature-card"><span class="feature-card__icon">◎</span><div><b>50+ стран</b><small>Сервера по всему миру</small></div></article>
+      </div>
+
+      <div class="quick-grid">
+        <button class="quick-card" data-page="tariffs"><span>Тарифы</span><small>Выбрать подписку</small><i>→</i></button>
+        <button class="quick-card" data-action="support"><span>Поддержка</span><small>Мы на связи в Telegram</small><i>↗</i></button>
+      </div>
+    </section>
+
+    <section class="page" id="page-tariffs">
+      <div class="section-head"><div><p class="eyebrow">AURA PLANS</p><h2>Выберите тариф</h2><p>Оформление подписки открывается в окне подтверждения.</p></div></div>
+      <div class="tariffs">
+        <article class="tariff" data-tariff="month"><span>1 месяц</span><strong>150 ₽</strong><small>Для знакомства</small><button class="buy-btn" data-tariff="month">Купить</button></article>
+        <article class="tariff tariff--popular" data-tariff="three"><div class="badge">ПОПУЛЯРНЫЙ</div><span>3 месяца</span><strong>400 ₽</strong><small>Экономия 50 ₽</small><button class="buy-btn" data-tariff="three">Купить</button></article>
+        <article class="tariff" data-tariff="year"><span>1 год</span><strong>1 500 ₽</strong><small>Экономия 300 ₽</small><button class="buy-btn" data-tariff="year">Купить</button></article>
+      </div>
+      <div class="info-panel"><b>Что входит</b><div><span>✓ Без лимита трафика</span><span>✓ Поддержка VLESS</span><span>✓ Помощь с подключением</span></div></div>
+    </section>
+
+    <section class="page" id="page-speed">
+      <div class="section-head"><div><p class="eyebrow">NETWORK CHECK</p><h2>Тест скорости</h2><p>Демонстрационный замер интерфейса — без загрузки больших файлов.</p></div></div>
+      <div class="speed-card"><div class="speed-value"><strong id="speedNumber">—</strong><span>Мбит/с</span></div><div class="speed-bar"><span id="speedBar"></span></div><div class="speed-stats"><span>Ping <b id="speedPing">—</b></span><span>Jitter <b id="speedJitter">—</b></span></div><button class="primary-btn" id="speedBtn">Запустить тест</button></div>
+    </section>
+
+    <section class="page" id="page-subscription">
+      <div class="section-head"><div><p class="eyebrow">MY AURA</p><h2>Моя подписка</h2><p>Здесь хранится локальное состояние подписки в этом браузере.</p></div></div>
+      <div class="subscription-card" id="subscriptionCard"></div>
+      <button class="secondary-btn" data-page="tariffs">Выбрать другой тариф</button>
+    </section>
+
+    <section class="page" id="page-profile">
+      <div class="section-head"><div><p class="eyebrow">AURA ACCOUNT</p><h2>Профиль</h2><p>Управление приложением и быстрый доступ к разделам.</p></div></div>
+      <div class="profile-card"><div class="avatar">A</div><div><strong>AURA user</strong><small id="profileState">Аккаунт не подключён</small></div></div>
+      <div class="profile-list">
+        <button data-page="speed"><span>↯</span> Тест скорости <i>→</i></button>
+        <button data-page="subscription"><span>◇</span> Моя подписка <i>→</i></button>
+        <button data-page="tariffs"><span>₽</span> Тарифы <i>→</i></button>
+        <button data-action="support"><span>?</span> Поддержка <i>↗</i></button>
+        <button data-action="about"><span>i</span> О сервисе <i>→</i></button>
+      </div>
+    </section>
+  </main>
+
+  <nav class="bottom-nav" aria-label="Навигация">
+    <button class="nav-item nav-item--active" data-page="home"><span>⌂</span><small>Главная</small></button>
+    <button class="nav-item" data-page="speed"><span>◴</span><small>Скорость</small></button>
+    <button class="nav-item" data-page="tariffs"><span>◈</span><small>Тарифы</small></button>
+    <button class="nav-item" data-page="subscription"><span>◇</span><small>Подписка</small></button>
+    <button class="nav-item" data-page="profile"><span>○</span><small>Профиль</small></button>
+  </nav>
+
+  <div class="modal" id="modal" aria-hidden="true">
+    <div class="modal__backdrop" data-close="1"></div>
+    <div class="modal__sheet" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <button class="modal__close" id="modalClose" aria-label="Закрыть">×</button>
+      <div class="modal__step" id="modalStep"></div>
+      <h3 id="modalTitle">AURA</h3>
+      <div class="modal__body" id="modalBody"></div>
+      <div class="modal__actions" id="modalActions"></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status"></div>
+  <script src="script.js"></script>
+</body>
+</html>
