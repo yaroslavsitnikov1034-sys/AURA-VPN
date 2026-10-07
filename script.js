@@ -34,6 +34,36 @@ function openStore(device){
   if(!url) return;
   window.location.assign(url);
 }
+
+function copyAndOpenV2RayTun(device){
+  const deepLink = `v2raytun://import/${encodeURIComponent(DEMO_VLESS)}`;
+  let leftPage = false;
+
+  const markLeftPage = () => { leftPage = true; };
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) markLeftPage();
+  }, { once: true });
+  window.addEventListener('pagehide', markLeftPage, { once: true });
+
+  // Запускаем копирование первым, а затем сразу открываем deep link.
+  // Для установленного v2RayTun это передаст конфигурацию в приложение.
+  try {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(DEMO_VLESS).catch(() => {});
+    }
+  } catch (e) {}
+
+  showToast('Ключ скопирован — открываем v2RayTun…');
+  window.location.href = deepLink;
+
+  // Если приложение не установлено и браузер остался на странице,
+  // отправляем пользователя в соответствующий магазин.
+  setTimeout(() => {
+    if (!leftPage && document.visibilityState === 'visible') {
+      openStore(device);
+    }
+  }, 2200);
+}
 function applyMobileLayout(){
   const device=detectDevice();
   document.documentElement.classList.toggle('is-mobile-device',device!=='desktop');
@@ -112,7 +142,7 @@ function showConnectionInfo(){
 function handleConnect(){
   const device=detectDevice();
   if(device==='android' || device==='ios'){
-    openStore(device);
+    copyAndOpenV2RayTun(device);
     return;
   }
   if(state.connected){state.connected=false;stopConnectTimer();updateHome();showToast('Соединение отключено');return;}
