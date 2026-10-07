@@ -1,6 +1,5 @@
 'use strict';
 
-const SUPPORT_URL = 'https://t.me/AURA_supp0rt';
 const APP_LINKS = {
   android: 'https://play.google.com/store/apps/details?id=com.v2raytun.android',
   ios: 'https://apps.apple.com/ru/app/v2ray-vpn-%D0%B2%D0%BF%D0%BD-v2raytun/id6798667599'
@@ -12,200 +11,196 @@ const TARIFFS = {
   year: {name:'1 год', price:1500, days:365}
 };
 
-const $ = (s, root=document) => root.querySelector(s);
-const $$ = (s, root=document) => [...root.querySelectorAll(s)];
-let state = { connected:false, connectStart:null, subscription:null };
-let timer = null;
-let speedTimer = null;
+const $ = (s) => document.querySelector(s);
+let state = {connected:false, subscription:null};
 
-function loadState(){
-  try { const raw=localStorage.getItem('aura_clean_state'); if(raw) state={...state,...JSON.parse(raw)}; }
-  catch(e){}
-  // A real OS-level VPN state cannot be safely inferred from a static GitHub Pages site.
-  state.connected=false;
-  state.connectStart=null;
+function detectDevice(){
+  const ua = navigator.userAgent || '';
+  if(/android/i.test(ua)) return 'android';
+  if(/iphone|ipad|ipod/i.test(ua)) return 'ios';
+  return 'desktop';
 }
-function saveState(){ try{ localStorage.setItem('aura_clean_state', JSON.stringify({subscription:state.subscription})); }catch(e){} }
-function escapeHtml(value){ return String(value).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c])); }
-function openExternal(url){ const a=document.createElement('a'); a.href=url; a.target='_blank'; a.rel='noopener noreferrer'; document.body.appendChild(a); a.click(); a.remove(); }
-function detectDevice(){ const ua=navigator.userAgent||''; if(/android/i.test(ua)) return 'android'; if(/iphone|ipad|ipod/i.test(ua)) return 'ios'; return 'desktop'; }
+
+function saveState(){
+  try{ localStorage.setItem('aura_minimal_state', JSON.stringify({subscription:state.subscription})); }catch(e){}
+}
+function loadState(){
+  try{
+    const raw = localStorage.getItem('aura_minimal_state');
+    if(raw) state.subscription = JSON.parse(raw).subscription || null;
+  }catch(e){}
+}
+function escapeHtml(value){
+  return String(value).replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+}
+function showToast(message){
+  const el = $('#toast');
+  el.textContent = message;
+  el.classList.add('is-visible');
+  clearTimeout(showToast.timer);
+  showToast.timer = setTimeout(() => el.classList.remove('is-visible'), 2400);
+}
+function openExternal(url){
+  const a = document.createElement('a');
+  a.href = url;
+  a.target = '_blank';
+  a.rel = 'noopener noreferrer';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+}
+
 function openStore(device){
-  const url=APP_LINKS[device];
-  if(!url) return;
-  window.location.assign(url);
+  const url = APP_LINKS[device];
+  if(url) window.location.assign(url);
 }
 
 function copyAndOpenV2RayTun(device){
   const deepLink = `v2raytun://import/${encodeURIComponent(DEMO_VLESS)}`;
   let leftPage = false;
+  const onVisibility = () => { if(document.hidden) leftPage = true; };
+  document.addEventListener('visibilitychange', onVisibility, {once:true});
+  window.addEventListener('pagehide', () => { leftPage = true; }, {once:true});
 
-  const markLeftPage = () => { leftPage = true; };
-  document.addEventListener('visibilitychange', () => {
-    if (document.hidden) markLeftPage();
-  }, { once: true });
-  window.addEventListener('pagehide', markLeftPage, { once: true });
+  try{
+    if(navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(DEMO_VLESS).catch(()=>{});
+  }catch(e){}
 
-  // Запускаем копирование первым, а затем сразу открываем deep link.
-  // Для установленного v2RayTun это передаст конфигурацию в приложение.
-  try {
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(DEMO_VLESS).catch(() => {});
-    }
-  } catch (e) {}
-
-  showToast('Ключ скопирован — открываем v2RayTun…');
+  showToast('Ключ скопирован');
   window.location.href = deepLink;
 
-  // Если приложение не установлено и браузер остался на странице,
-  // отправляем пользователя в соответствующий магазин.
   setTimeout(() => {
-    if (!leftPage && document.visibilityState === 'visible') {
-      openStore(device);
-    }
+    if(!leftPage && document.visibilityState === 'visible') openStore(device);
   }, 2200);
 }
-function applyMobileLayout(){
-  const device=detectDevice();
-  document.documentElement.classList.toggle('is-mobile-device',device!=='desktop');
+
+function updateConnectionState(){
+  $('#statusText').textContent = state.connected ? 'Подключено' : 'Не подключено';
+  $('#statusText').classList.toggle('is-connected', state.connected);
+  $('#connectBtn').classList.toggle('is-connected', state.connected);
+  $('#connectLabel').textContent = state.connected ? 'Отключиться' : 'Подключиться';
 }
-applyMobileLayout();
-window.addEventListener('resize',applyMobileLayout);
-function showToast(message){ const el=$('#toast'); el.textContent=message; el.classList.add('is-visible'); clearTimeout(showToast.t); showToast.t=setTimeout(()=>el.classList.remove('is-visible'),2400); }
-function showModal({step='',title,body,actions=[]}){
-  $('#modalStep').textContent=step;
-  $('#modalTitle').textContent=title;
-  $('#modalBody').innerHTML=body;
-  const actionsEl=$('#modalActions'); actionsEl.innerHTML='';
-  actions.forEach(a=>{
-    const btn=document.createElement('button'); btn.textContent=a.label; btn.className=a.primary?'primary':'ghost';
-    btn.addEventListener('click',()=>{
-      const keepOpen=a.onClick ? a.onClick() : false;
+
+function openModal({step='', title, body, actions=[]}){
+  $('#modalStep').textContent = step;
+  $('#modalTitle').textContent = title;
+  $('#modalBody').innerHTML = body;
+  const wrap = $('#modalActions');
+  wrap.innerHTML = '';
+
+  actions.forEach(action => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.textContent = action.label;
+    button.className = action.primary ? 'primary' : 'ghost';
+    button.addEventListener('click', async () => {
+      const keepOpen = action.onClick ? await action.onClick() : false;
       if(!keepOpen) closeModal();
     });
-    actionsEl.appendChild(btn);
+    wrap.appendChild(button);
   });
-  $('#modal').classList.add('is-open'); $('#modal').setAttribute('aria-hidden','false');
-}
-function closeModal(){ $('#modal').classList.remove('is-open'); $('#modal').setAttribute('aria-hidden','true'); }
-function switchPage(id){
-  $$('.page').forEach(p=>p.classList.toggle('page--active',p.id===`page-${id}`));
-  $$('.nav-item').forEach(n=>n.classList.toggle('nav-item--active',n.dataset.page===id));
-  if(id==='subscription') renderSubscription();
-  if(id==='profile') renderProfile();
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-function updateHome(){
-  const status=$('#statusBar'); const label=$('#statusText'); const btn=$('#connectBtn');
-  status.classList.toggle('status--connected',state.connected); label.textContent=state.connected?'Подключено':'Не подключено';
-  btn.classList.toggle('connected',state.connected);
-  $('#profileState').textContent=state.connected?'Подключение активно':(state.subscription?`Тариф: ${state.subscription.name}`:'Аккаунт не подключён');
-  if(state.connected){
-    $('#connectLabel').textContent='Отключить'; $('#ipValue').textContent=' защищено'; $('#serverValue').textContent='AURA Global'; $('#pingValue').textContent='—';
-  } else {
-    $('#connectLabel').textContent='Подключить'; $('#connectTimer').textContent='00:00:00'; $('#ipValue').textContent='—'; $('#serverValue').textContent='—'; $('#pingValue').textContent='—';
-  }
-}
-function startConnectTimer(){ clearInterval(timer); state.connectStart=Date.now(); $('#connectTimer').style.display='block'; timer=setInterval(()=>{const s=Math.floor((Date.now()-state.connectStart)/1000); const h=String(Math.floor(s/3600)).padStart(2,'0'); const m=String(Math.floor((s%3600)/60)).padStart(2,'0'); const sec=String(s%60).padStart(2,'0'); $('#connectTimer').textContent=`${h}:${m}:${sec}`;},1000); }
-function stopConnectTimer(){ clearInterval(timer); timer=null; $('#connectTimer').style.display='none'; }
 
-function startWizard(){
-  const device=detectDevice();
-  showModal({step:'Шаг 1 из 3',title:'Проверка конфигурации',body:`<p>Проверяем формат подключения и подготавливаем инструкции для <strong>${device==='android'?'Android':device==='ios'?'iPhone / iPad':'ПК'}</strong>.</p><div class="key">VLESS ✓<br>Конфигурация готова к импорту.</div>`,actions:[
-    {label:'Отмена',primary:false},
-    {label:'Далее',primary:true,onClick:()=>{showInstallStep(device);return true;}}
-  ]});
+  $('#modal').classList.add('is-open');
+  $('#modal').setAttribute('aria-hidden','false');
 }
-function showInstallStep(device){
-  let body='';
-  if(device==='android') body=`<p>Установите v2RayTun из Google Play. На странице приложения можно импортировать конфигурацию из буфера обмена или по ссылке.</p>`;
-  else if(device==='ios') body=`<p>Откройте App Store и установите совместимый клиент. После установки вернитесь сюда и продолжите настройку.</p>`;
-  else body=`<p>На ПК откройте совместимый VLESS-клиент. Этот сайт не устанавливает приложения автоматически.</p>`;
-  const actions=[{label:'Назад',primary:false,onClick:()=>{startWizard();return true;}}];
-  if(device==='android') actions.push({label:'Google Play',primary:true,onClick:()=>{openExternal(APP_LINKS.android);return true;}});
-  else if(device==='ios') actions.push({label:'App Store',primary:true,onClick:()=>{openExternal(APP_LINKS.ios);return true;}});
-  actions.push({label:'Далее',primary:true,onClick:()=>{showConfigStep();return true;}});
-  showModal({step:'Шаг 2 из 3',title:'Установка клиента',body,actions});
+function closeModal(){
+  $('#modal').classList.remove('is-open');
+  $('#modal').setAttribute('aria-hidden','true');
 }
-function showConfigStep(){
-  showModal({step:'Шаг 3 из 3',title:'Ваша конфигурация',body:`<p>Скопируйте VLESS-конфигурацию и импортируйте её в выбранный клиент.</p><div class="key" id="vlessKey">${escapeHtml(DEMO_VLESS)}</div><p style="margin-top:10px">В демо-версии ключ тестовый. Для реального подключения нужен сервер и выданная сервером конфигурация.</p>`,actions:[
-    {label:'Скопировать',primary:false,onClick:async()=>{try{await navigator.clipboard.writeText(DEMO_VLESS);showToast('Конфигурация скопирована');}catch(e){showToast('Скопируйте ключ вручную');}return true;}},
-    {label:'Завершить',primary:true,onClick:()=>{showConnectionInfo();return true;}}
-  ]});
+
+function showTariffs(){
+  const cards = Object.entries(TARIFFS).map(([code,t]) => `
+    <div class="tariff-option">
+      <strong>${escapeHtml(t.name)}</strong>
+      <span>${t.price.toLocaleString('ru-RU')} ₽</span>
+      <button type="button" data-tariff-code="${code}">Выбрать</button>
+    </div>
+  `).join('');
+
+  openModal({
+    step:'AURA PLANS',
+    title:'Выберите тариф',
+    body:`<div class="tariff-list">${cards}</div>`,
+    actions:[{label:'Закрыть',primary:false}]
+  });
+
+  document.querySelectorAll('[data-tariff-code]').forEach(button => {
+    button.addEventListener('click', () => handlePurchase(button.dataset.tariffCode));
+  });
 }
-function showConnectionInfo(){
-  showModal({step:'Готово',title:'Проверка завершена',body:`<p>Браузер не может достоверно проверить состояние VPN-клиента в другой программе.</p><div class="key">После импорта включите соединение в клиенте.</div>`,actions:[
-    {label:'Закрыть',primary:false},
-    {label:'Я подключился',primary:true,onClick:()=>{state.connected=true;startConnectTimer();updateHome();showToast('Статус соединения обновлён');switchPage('home');return false;}}
-  ]});
+
+function handlePurchase(code){
+  const t = TARIFFS[code];
+  if(!t) return;
+  openModal({
+    step:'Покупка тарифа',
+    title:t.name,
+    body:`<p>Стоимость: <strong>${t.price.toLocaleString('ru-RU')} ₽</strong>.</p><p>Сейчас оформление работает в демо-режиме. Реальная оплата подключается через серверную часть.</p>`,
+    actions:[
+      {label:'Назад',primary:false,onClick:()=>{showTariffs();return true;}},
+      {label:'Продолжить',primary:true,onClick:()=>{activateSubscription(t);return false;}}
+    ]
+  });
+}
+function activateSubscription(t){
+  const expires = new Date(Date.now() + t.days*86400000).toISOString();
+  state.subscription = {name:t.name,price:t.price,expires};
+  saveState();
+  showToast(`Тариф «${t.name}» выбран`);
+}
+
+function startDesktopWizard(){
+  openModal({
+    step:'Шаг 1 из 3',
+    title:'Проверка конфигурации',
+    body:'<p>Проверяем формат подключения и готовим конфигурацию для ПК.</p><div class="key">VLESS ✓<br>Конфигурация готова к импорту.</div>',
+    actions:[
+      {label:'Закрыть',primary:false},
+      {label:'Далее',primary:true,onClick:()=>{showDesktopInstall();return true;}}
+    ]
+  });
+}
+function showDesktopInstall(){
+  openModal({
+    step:'Шаг 2 из 3',
+    title:'Установка клиента',
+    body:'<p>Откройте совместимый VLESS-клиент на ПК. Сайт не устанавливает приложения автоматически.</p>',
+    actions:[
+      {label:'Назад',primary:false,onClick:()=>{startDesktopWizard();return true;}},
+      {label:'Далее',primary:true,onClick:()=>{showDesktopConfig();return true;}}
+    ]
+  });
+}
+function showDesktopConfig(){
+  openModal({
+    step:'Шаг 3 из 3',
+    title:'Ваша конфигурация',
+    body:`<p>Скопируйте VLESS-конфигурацию и импортируйте её в клиент.</p><div class="key">${escapeHtml(DEMO_VLESS)}</div>`,
+    actions:[
+      {label:'Скопировать',primary:false,onClick:async()=>{try{await navigator.clipboard.writeText(DEMO_VLESS);showToast('Ключ скопирован');}catch(e){showToast('Скопируйте ключ вручную');}return true;}},
+      {label:'Готово',primary:true}
+    ]
+  });
 }
 
 function handleConnect(){
-  const device=detectDevice();
-  if(device==='android' || device==='ios'){
+  const device = detectDevice();
+  if(device === 'android' || device === 'ios'){
     copyAndOpenV2RayTun(device);
     return;
   }
-  if(state.connected){state.connected=false;stopConnectTimer();updateHome();showToast('Соединение отключено');return;}
-  startWizard();
-}
-function handlePurchase(code){
-  const t=TARIFFS[code]; if(!t)return;
-  showModal({step:'Покупка тарифа',title:t.name,body:`<p>Стоимость: <strong>${t.price.toLocaleString('ru-RU')} ₽</strong>.</p><p>Ниже используется демонстрационное оформление: реальная оплата требует подключённого платёжного сервиса и серверной части.</p>`,actions:[
-    {label:'Отмена',primary:false},
-    {label:'Продолжить',primary:true,onClick:()=>{activateSubscription(t);return false;}}
-  ]});
-}
-function activateSubscription(t){
-  const expires=new Date(Date.now()+t.days*86400000).toISOString(); state.subscription={name:t.name,price:t.price,expires}; saveState(); renderSubscription(); showToast(`Тариф «${t.name}» активирован в демо-режиме`); switchPage('subscription'); }
-function renderSubscription(){
-  const el=$('#subscriptionCard');
-  if(!state.subscription){el.innerHTML='<div class="empty">Активной подписки нет.<br>Выберите тариф, чтобы продолжить.</div>';return;}
-  const date=new Date(state.subscription.expires).toLocaleDateString('ru-RU');
-  el.innerHTML=`<h3>${escapeHtml(state.subscription.name)}</h3><p>${state.subscription.price.toLocaleString('ru-RU')} ₽ · демо-статус</p><span class="expiry">Действует до ${date}</span>`;
-}
-function renderProfile(){ updateHome(); }
-
-function runSpeedTest(){
-  clearTimeout(speedTimer);
-  const card=$('#speedCard');
-  const btn=$('#speedBtn');
-  const stateText=$('#speedState');
-  const hint=$('#speedHint');
-  if(card) card.classList.add('is-testing');
-  if(btn){btn.disabled=true;btn.textContent='Измеряем…';}
-  if(stateText) stateText.textContent='Измеряем скорость';
-  if(hint) hint.textContent='Проверяем канал и задержку';
-  $('#speedNumber').textContent='0'; $('#speedBar').style.width='0%';
-  $('#speedPing').textContent='—'; $('#speedJitter').textContent='—';
-  let n=0; const target=72;
-  const step=()=>{
-    n+=3;
-    if(n>=target){
-      n=target;
-      if(card) card.classList.remove('is-testing');
-      $('#speedNumber').textContent=n; $('#speedBar').style.width='86%';
-      $('#speedPing').textContent='38 мс'; $('#speedJitter').textContent='5 мс';
-      if(stateText) stateText.textContent='Тест завершён';
-      if(hint) hint.textContent='Результат готов';
-      if(btn){btn.textContent='Повторить тест';btn.disabled=false;}
-      return;
-    }
-    $('#speedNumber').textContent=n;
-    $('#speedBar').style.width=Math.round(n/target*78)+'%';
-    speedTimer=setTimeout(step,45);
-  };
-  step();
+  if(state.connected){
+    state.connected = false;
+    updateConnectionState();
+    showToast('Соединение отключено');
+    return;
+  }
+  startDesktopWizard();
 }
 
-$('#connectBtn').addEventListener('click',handleConnect);
-$('#settingsBtn').addEventListener('click',()=>showModal({step:'AURA VPN',title:'Настройки',body:'<p>Сайт работает без обязательной привязки к Telegram и хранит только демо-состояние подписки в этом браузере.</p>',actions:[{label:'Закрыть',primary:true}]}));
-$('#modalClose').addEventListener('click',closeModal); $('.modal__backdrop').addEventListener('click',closeModal);
-$('#speedBtn').addEventListener('click',runSpeedTest);
-$$('[data-page]').forEach(el=>el.addEventListener('click',()=>switchPage(el.dataset.page)));
-$$('[data-action="support"]').forEach(el=>el.addEventListener('click',()=>openExternal(SUPPORT_URL)));
-$$('[data-action="about"]').forEach(el=>el.addEventListener('click',()=>showModal({step:'О сервисе',title:'AURA VPN',body:'<p>AURA — интерфейс для управления подпиской и пошагового подключения. Публикация на GitHub Pages не заменяет сервер, оплату или выдачу реальных VPN-конфигураций.</p>',actions:[{label:'Понятно',primary:true}]})));
-$$('.buy-btn').forEach(el=>el.addEventListener('click',e=>{e.stopPropagation();handlePurchase(el.dataset.tariff)}));
-$$('.tariff').forEach(el=>el.addEventListener('click',e=>{if(!e.target.closest('.buy-btn'))handlePurchase(el.dataset.tariff)}));
-$('.brand').addEventListener('click',()=>switchPage('home'));
+$('#connectBtn').addEventListener('click', handleConnect);
+$('#tariffBtn').addEventListener('click', showTariffs);
+$('#modal .modal__backdrop').addEventListener('click', closeModal);
 
-loadState(); updateHome(); renderSubscription(); renderProfile();
+loadState();
+updateConnectionState();
